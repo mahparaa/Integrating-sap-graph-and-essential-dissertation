@@ -1,9 +1,9 @@
 import os
 import json
 import logging
-import essential_api
-import sap_graph
-import connect_neo4j
+import domain.essential_api as essential_api
+import domain.sap_graph as sap_graph 
+import domain.connect_neo4j as connect_neo4j
 
 logging.basicConfig(level = logging.INFO)
 
