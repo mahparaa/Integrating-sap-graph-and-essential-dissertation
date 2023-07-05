@@ -59,3 +59,39 @@ def create_data(G: Network):
 
     # Close the database connection
     driver.close()
+
+def get_search_result(entity: str):
+    with driver.session() as session:
+        result = session.run("MATCH (n:{0})-[r]-(m) RETURN n,r,m".format(entity))
+        nodes = []
+        edges = []
+        
+        for record in result.data():
+            # Extract node and edge data from the query result
+            print(record['n'])
+            node_data = record["n"]
+            edge_data = record["r"]
+            
+            label = node_data["domain"] + '.' + node_data["title"] + '.' + node_data["name"]
+            nodes.append(label)
+            
+            
+            # # Create a dictionary to represent the edge
+            from_rel = edge_data[0]
+            from_ = from_rel["domain"] + '.' + from_rel["title"] + '.' + from_rel["name"]
+
+            to_rel = edge_data[2]
+            to_ = to_rel["domain"] + '.' + to_rel["title"] + '.' + to_rel["name"]
+            
+            edge = {'from': from_, 'to': to_}
+            edges.append(edge)
+
+    net = Network(height='500px', width='500px', directed=True)
+    for node in nodes:
+        net.add_node(node)
+    for edge_as_node in edges:
+        net.add_node(edge_as_node['to'])
+    for edge in edges:
+        net.add_edge(edge['from'], edge['to'])
+
+    return { 'nodes': net.nodes, 'edges': net.edges }

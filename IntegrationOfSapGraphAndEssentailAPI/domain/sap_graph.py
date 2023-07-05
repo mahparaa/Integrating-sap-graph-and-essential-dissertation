@@ -1,8 +1,9 @@
 from pyvis.network import Network
 import requests
+import json
 
 def get_name(input_string: str):
-    link_format = 'https://eu10.graph.sap/catalog/my-bdg/'
+    link_format = 'https://eu10.graph.sap/catalog/sp-beta-test/'
     new_string = input_string.replace(link_format, '')
     splitted_string = new_string.split('#')[0]
     if splitted_string == '':
@@ -68,7 +69,7 @@ def get_split_for_group(input_str: str):
     module = splitting[1].split('/')[0]
     return sap + '.' + module
 
-def create_graph(d: dict, html_file):
+def create_graph(d: dict, html_file = 'create_graph.html', create_html = False):
     nt = Network()
     nt.layout_algorithm = 'hierarchical'
     nt.force_atlas_2based()
@@ -77,12 +78,14 @@ def create_graph(d: dict, html_file):
         'sap.c4c': 'red',
         'sap.s4': 'darkblue',
         'sap.graph': 'green',
+        'sap.hcm': 'purple',
     }
 
     val_shap = {
         'sap.c4c': 'dot',
         'sap.s4': 'star',
         'sap.graph': 'triangle',
+        'sap.hcm': 'diamond',
     }
 
     for source, targets in d.items():
@@ -94,7 +97,8 @@ def create_graph(d: dict, html_file):
             nt.add_node(target, color=color, label = target, shape=shape, font={'size': 20, 'bold': True})
             nt.add_edge(source, target, color=color, width=3)
 
-    nt.save_graph(html_file)
+    if create_html:
+        nt.save_graph(html_file)
     return nt
 
 
@@ -105,3 +109,30 @@ def call_login_api(url: str, body: dict, headers: dict):
     
     data = response.json()
     return data
+
+def download_all_system_entities(GRAPH_URL, GRAPH_ID, access_token, inter_key):
+    url = '{0}/catalog/{1}'.format(GRAPH_URL, GRAPH_ID)
+
+    headers = {
+        'Authorization': 'Bearer {0}'.format(access_token),
+        'Accept': 'application/json',
+        'Application-Interface-Key': inter_key
+    }
+    response = requests.get(url, headers=headers)
+    data = response.json()
+    urls = [GRAPH_URL + item['catalog'] for item in data['value']]
+
+    for system_url in urls:
+        response = requests.get(system_url, headers=headers)
+        entities_urls = [GRAPH_URL + item['openapi'] for item in response.json()['value']]
+        
+        for entity_url in entities_urls:
+            response = requests.get(entity_url, headers=headers)
+            file_name = entity_url.replace('{0}/catalog/{1}/'.format(GRAPH_URL, GRAPH_ID), '').replace('/', '.') + '.json'
+            data = response.json()
+
+            dir = '../data/sap/{0}'.format(file_name)
+            with open(dir, 'w') as fp:
+                json.dump(data, fp)
+
+    return True

@@ -10,8 +10,84 @@
                 </form>
             {% else %}
                 <button class='btn btn-secondary'>SAP Logout</button>
+                <button id='downloadBtn' class='btn btn-primary' onclick="downloadEntities()">Sync All Entities ({{total_synced}})</button>
+                <button id='neo4jBtn' class='btn btn-primary' onclick="uploadToNeo4j()">Sync With Neo4j</button>
+                <button id='loadGraphBtn' class='btn btn-primary' onclick="loadGraph()">Load Graph Network</button>
             {% endif %}
+            <div id='spinner' class="spinner-border text-primary hidden d-none" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
         </div>
+</div>
+<div class='row m-2'>
+    <div class='col-sm-6'>
+        <input class='w-100' type='text' name='from' placeholder='Relationship From' />
+    </div>
+    <div class='col-sm-3'>
+        <button id='searchRelationship' class='btn btn-success' onclick='searchRelationship()'>Search</button>
     </div>
 </div>
+<div id="mynetwork" class='border'></div>
+<script>
+    function downloadEntities() {
+        $('#spinner').removeClass("d-none");
+        $("#downloadBtn").prop("disabled", true);
+        fetch('sap/download').then(response => response.json())
+            .then(data => {
+                $("#spinner").addClass("d-none");
+                $("#downloadBtn").prop("disabled", false);
+            });
+    }
+
+    function uploadToNeo4j() {
+        $('#spinner').removeClass("d-none");
+        $("#neo4jBtn").prop("disabled", true);
+        fetch('sap/neo4j').then(response => response.json())
+            .then(data => {
+                $("#spinner").addClass("d-none");
+                $("#neo4jBtn").prop("disabled", false);
+            })
+    }
+
+    function loadGraph() {
+        $('#spinner').removeClass("d-none");
+        $("#loadGraphBtn").prop("disabled", true);
+        fetch('sap/network').then(response => response.json())
+            .then(data => {
+                const nodes = new vis.DataSet(data.nodes);
+                const edges = new vis.DataSet(data.edges);
+
+                const container = document.getElementById('mynetwork');
+            
+                const newtworkData = {
+                    nodes: nodes,
+                    edges: edges
+                };
+                const options = {};
+                const network = new vis.Network(container, newtworkData, options);
+                $("#spinner").addClass("d-none");
+                $("#loadGraphBtn").prop("disabled", false);
+            });
+    }
+
+    function searchRelationship() {
+        const value = $('input[name="from"]').val()
+        fetch(`sap/neo4j/search?from_entity=${value}`)
+            .then(response => response.json())
+            .then(data => {
+                const nodes = new vis.DataSet(data.nodes);
+                const edges = new vis.DataSet(data.edges);
+
+                const container = document.getElementById('mynetwork');
+            
+                const newtworkData = {
+                    nodes: nodes,
+                    edges: edges
+                };
+                const options = {};
+                const network = new vis.Network(container, newtworkData, options);
+            });
+    }
+
+</script>
 {% endblock %}

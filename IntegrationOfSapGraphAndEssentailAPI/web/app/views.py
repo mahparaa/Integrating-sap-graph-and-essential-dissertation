@@ -2,7 +2,9 @@ from django.shortcuts import render, redirect
 from dotenv import load_dotenv
 import os
 from django.http import HttpResponse
+from django.http import JsonResponse
 import time
+import json
 
 load_dotenv()
 
@@ -10,11 +12,17 @@ import sys
 sys.path.append('..')
 
 from domain import sap_graph as sp_grahp
+from domain import connect_neo4j as c_neo4j
 
 CLIENT_ID = os.getenv("client.id")
 CLIENT_SECRET = os.getenv('client.secret')
 REDIRECT_URI = os.getenv('redirect.url')
 TOKEN_URL = os.getenv('token.url')
+GRAPH_URL = os.getenv('graph.url')
+GRAPH_ID = os.getenv('graph.id')
+APP_INT_ID = os.getenv('application.interface.key')
+
+sap_dir = '../data/sap/'
 
 def index(request): 
     return render(request, 'index.djt.html')
@@ -27,7 +35,8 @@ def sap_graph(request):
         is_expired = True
     
     context = {
-        'is_expired': is_expired
+        'is_expired': is_expired,
+        'total_synced': len([name for name in os.listdir(sap_dir)])
     }
     
     return render(request, 'sap-graph.djt.html', context)
@@ -64,9 +73,36 @@ def sap_login_callback(request):
     return response
 
 def sap_execute_neo4j_query(request):
+    #TODO execute query and map to network
     return render(request, 'sap-graph.djt.html')
 
+def sync_to_neo4j(request):
+    json_files = [pos_json for pos_json in os.listdir(sap_dir) if pos_json.endswith('.json')]
+    for json_file in json_files:
+        with open(sap_dir + json_file, 'r') as f:
+            sp_grahp.get_all_component(json.loads(f.read()))
+
+    network = sp_grahp.create_graph(sp_grahp.relationship_with_entity)
+    c_neo4j.create_data(network)
+
+    return JsonResponse({ 'success': True })
+
+def search_from_neo4j(request):
+    from_ = request.GET.get('from_entity')
+    data = c_neo4j.get_search_result(from_)
+    return JsonResponse(data)
 
 def sap_sync_all_the_entites(request):
-    # TODO get all the entities data
-    return render(request)
+    access_token = request.COOKIES.get('access_token')
+    data = sp_grahp.download_all_system_entities(GRAPH_URL, GRAPH_ID, access_token, APP_INT_ID)
+    return JsonResponse({ 'success': True })
+
+
+def load_sap_graph_nodes_and_edges(request):
+    json_files = [pos_json for pos_json in os.listdir(sap_dir) if pos_json.endswith('.json')]
+    for json_file in json_files:
+        with open(sap_dir + json_file, 'r') as f:
+            sp_grahp.get_all_component(json.loads(f.read()))
+
+    network = sp_grahp.create_graph(sp_grahp.relationship_with_entity)
+    return JsonResponse({ 'edges': network.edges, 'nodes': network.nodes  })
