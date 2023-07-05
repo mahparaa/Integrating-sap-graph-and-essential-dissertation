@@ -2,6 +2,7 @@ from pyvis.network import Network
 from neo4j import GraphDatabase
 import os
 from dotenv import load_dotenv
+from domain import sap_graph
 
 load_dotenv()
 
@@ -68,7 +69,6 @@ def get_search_result(entity: str):
         
         for record in result.data():
             # Extract node and edge data from the query result
-            print(record['n'])
             node_data = record["n"]
             edge_data = record["r"]
             
@@ -85,13 +85,33 @@ def get_search_result(entity: str):
             
             edge = {'from': from_, 'to': to_}
             edges.append(edge)
-
+    
     net = Network(height='500px', width='500px', directed=True)
+
+    val_map = {
+        'sap.c4c': 'red',
+        'sap.s4': 'darkblue',
+        'sap.graph': 'green',
+        'sap.hcm': 'purple',
+    }
+
+    val_shap = {
+        'sap.c4c': 'dot',
+        'sap.s4': 'star',
+        'sap.graph': 'triangle',
+        'sap.hcm': 'diamond',
+    }
+
+
     for node in nodes:
-        net.add_node(node)
+        s_group = sap_graph.get_split_for_group(node)
+        color = val_map.get(s_group, 'black')
+        shape = val_shap.get(s_group, 'diamond')
+        net.add_node(node, color=color, shape=shape, font={'size': 20, 'bold': True})
     for edge_as_node in edges:
-        net.add_node(edge_as_node['to'])
+        net.add_node(edge_as_node['from'], color=color, shape=shape, font={'size': 20, 'bold': True})
+        net.add_node(edge_as_node['to'], color=color, shape=shape, font={'size': 20, 'bold': True})
     for edge in edges:
-        net.add_edge(edge['from'], edge['to'])
+        net.add_edge(edge['from'], edge['to'], color=color)
 
     return { 'nodes': net.nodes, 'edges': net.edges }
