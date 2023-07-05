@@ -1,5 +1,5 @@
 from pyvis.network import Network
-
+import requests
 
 def get_name(input_string: str):
     link_format = 'https://eu10.graph.sap/catalog/my-bdg/'
@@ -97,3 +97,11 @@ def create_graph(d: dict, html_file):
     nt.save_graph(html_file)
     return nt
 
+
+def call_login_api(url: str, body: dict, headers: dict):
+    response = requests.request('POST', url, data=body, headers=headers)
+    if response.status_code != 200:
+        raise Exception('Logging to SAP fails', response.json())
+    
+    data = response.json()
+    return data
