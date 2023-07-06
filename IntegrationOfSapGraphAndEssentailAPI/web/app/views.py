@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from django.http import JsonResponse
 import time
 import json
+from django.contrib.sessions.backends.db import SessionStore
 
 load_dotenv()
 
@@ -13,6 +14,7 @@ sys.path.append('..')
 
 from domain import sap_graph as sp_grahp
 from domain import connect_neo4j as c_neo4j
+from domain import essential_api as ea
 
 CLIENT_ID = os.getenv("client.id")
 CLIENT_SECRET = os.getenv('client.secret')
@@ -40,6 +42,38 @@ def sap_graph(request):
     }
     
     return render(request, 'sap-graph.djt.html', context)
+
+def login_to_ea(request):
+    session = request.session
+    has_session = False
+    if session.get('access_token'):
+        has_session = True
+    context = { "has_session": has_session }
+    return render(request, 'ea-login.djt.html', context = context)
+
+def handle_login_to_ea(request):
+    api_key = request.POST.get('apiKey')
+    password = request.POST.get('password')
+    username = request.POST.get('username')
+    
+    login = ea.LoginApi(cli=False)
+    login.login_get_oauth_token(username, password, api_key)
+    token_details = login.get_token()
+    
+    session = SessionStore()
+    session['bearer_token'] = token_details['access_token']
+    session['refresh_token'] = token_details['refresh_token']
+    set_expiry = token_details['expires_in_minutes'] * 60 * 1000
+    session.set_expiry(set_expiry)
+
+    session.save()
+    response = HttpResponse("Session set successfully")
+    response.set_cookie('sessionid', session.session_key, expires=set_expiry)
+
+    response['Location'] = '/essential-architecture'
+    response.status_code = 302
+
+    return response
 
 def essentail_architecture(request):
     return render(request, 'essential-architecture.djt.html')

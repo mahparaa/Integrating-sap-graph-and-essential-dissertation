@@ -1,6 +1,15 @@
 {% extends 'base.html' %}
 {% block content %}
-    <div>
-        Here you can start the essential architecture automation process
+    <div class="container m-4">
+        <div class='row'>
+            <div class="col-lg">
+                Essential Architecture Automation
+            </div>
+        </div>
+        {% if has_session %}
+        <a href='/ea/login'>Login To EA</a>
+        {% else %}
+        <div>You are logged in to EA</div>
+        {% endif %}
     </div>
 {% endblock %}

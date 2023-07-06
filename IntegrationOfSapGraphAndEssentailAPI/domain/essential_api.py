@@ -18,8 +18,12 @@ EA_PASSWORD = os.getenv('EA_PASSWORD')
 REPO_ID = os.getenv('REPOSITORY_ID')
 
 class LoginApi:
-    def __init__(self):
-        self.AUTHORIZATION_TOKEN = self._load_token()
+    def __init__(self, cli = True):
+        self.cli = cli
+        if cli:
+            self.AUTHORIZATION_TOKEN = self._load_token()
+        else:
+            self.AUTHORIZATION_TOKEN = {}
 
     def get_token(self):
         return self.AUTHORIZATION_TOKEN
@@ -32,19 +36,19 @@ class LoginApi:
         with open('./token/login.json', 'r') as json_file:
             return json.load(json_file)
 
-    def login_get_oauth_token(self):
+    def login_get_oauth_token(self, username = '', password = '', apikey = ''):
         logging.info('Getting access token')
 
         url = EA_BASE_URL + "api/oauth/token"
 
         payload = json.dumps({
-        "username": EA_USERNAME,
-        "password": EA_PASSWORD,
+        "username": EA_USERNAME if self.cli else username,
+        "password": EA_PASSWORD if self.cli else password,
         "grantType": "password"
         })
         headers = {
         'Content-Type': 'application/json',
-        'x-api-key': EA_API_KEY
+        'x-api-key': EA_API_KEY if self.cli else apikey
         }
         response = requests.request("POST", url, headers=headers, data=payload)
 
@@ -54,9 +58,11 @@ class LoginApi:
         
         data = response.json()
         self.AUTHORIZATION_TOKEN['access_token'] = data['bearerToken']
-        self.AUTHORIZATION_TOKEN['refresh_token'] = data['bearerToken']
+        self.AUTHORIZATION_TOKEN['refresh_token'] = data['refreshToken']
+        self.AUTHORIZATION_TOKEN['expires_in_minutes'] = data['expiresInMinutes']
 
-        self.store_token()
+        if self.cli:
+            self.store_token()
 
 class BusinessCapabilityApi:
     def __init__(self, login: LoginApi) -> None:
