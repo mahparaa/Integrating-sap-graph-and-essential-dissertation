@@ -31,6 +31,8 @@ def index(request):
 
 def sap_graph(request):
     expires = request.COOKIES.get('expires_in')
+    expires = expires if expires else 0
+    
     current_time = int(time.time()) + int(expires)
     is_expired = False
     if current_time < int(time.time()):

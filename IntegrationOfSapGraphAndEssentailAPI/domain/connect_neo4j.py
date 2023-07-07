@@ -61,6 +61,12 @@ def create_data(G: Network):
     # Close the database connection
     driver.close()
 
+def _add_unique_edge(net, source, target, edge_set):
+    # Check if the edge already exists
+    if (source, target) not in edge_set:
+        net.add_edge(source, target)
+        edge_set.add((source, target))
+
 def get_search_result(entity: str):
     with driver.session() as session:
         result = session.run("MATCH (n:{0})-[r]-(m) RETURN n,r,m".format(entity))
@@ -111,7 +117,9 @@ def get_search_result(entity: str):
     for edge_as_node in edges:
         net.add_node(edge_as_node['from'], color=color, shape=shape, font={'size': 20, 'bold': True})
         net.add_node(edge_as_node['to'], color=color, shape=shape, font={'size': 20, 'bold': True})
+    
+    set_edge = set()
     for edge in edges:
-        net.add_edge(edge['from'], edge['to'], color=color)
-
+        _add_unique_edge(net, edge['from'], edge['to'], set_edge)
+            
     return { 'nodes': net.nodes, 'edges': net.edges }
