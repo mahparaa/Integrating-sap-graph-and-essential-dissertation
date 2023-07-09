@@ -14,5 +14,6 @@ urlpatterns = [
     path('sap/neo4j/search', views.search_from_neo4j),
     path('essential-architecture', views.essentail_architecture),
     path('ea/login', views.login_to_ea),
-    path('ea/login/handle', views.handle_login_to_ea)
+    path('ea/login/handle', views.handle_login_to_ea),
+    path('/ea/create/inforamtion/concepts', views.create_information_layers)
 ]
