@@ -10,12 +10,27 @@
         <a href='/ea/login'>Login To EA</a>
         {% else %}
         <div>You are logged in to EA</div>
-        <form>
-            <button class='btn btn-secondary'>Logout EA</button>
-        </form>
-        <form action='/ea/create/inforamtion/concepts'>
-            <button class='btn btn-primary'>Create Information Concept</button>
-        </form>
+        <a href='/ea/login' class='btn btn-secondary'>Logout To EA</a>
+        <input id='csrfToken' style='display: none' value='{{ csrf_token }}' />
+        <button class='btn btn-primary' onclick="createInformationConcepts()">Create Information Concept</button>
         {% endif %}
     </div>
+    
+    <script>
+        function createInformationConcepts() {
+            fetch('/ea/create/information/concepts', { 
+                method: "POST",
+                headers: {
+                    'X-CSRFToken': $('#csrfToken').val()
+                } 
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Handle the response data as needed
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>    
 {% endblock %}

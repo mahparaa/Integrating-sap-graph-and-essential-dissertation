@@ -5,6 +5,7 @@ import logging
 import json
 import pandas as pd
 import math
+import curlify
 
 logging.basicConfig(level = logging.INFO)
 
@@ -16,7 +17,8 @@ EA_BASE_URL = os.getenv('EA_BASE_URL')
 EA_USERNAME = os.getenv('EA_USERNAME')
 EA_PASSWORD = os.getenv('EA_PASSWORD')
 REPO_ID = os.getenv('REPOSITORY_ID')
-INSTANCE_URL = EA_BASE_URL + 'api/essential-utility/v3/repositories/{0}/instances/batch'.format(REPO_ID)
+SINGLE_INSTANCE_URL = EA_BASE_URL + 'api/essential-utility/v3/repositories/{0}/instances'.format(REPO_ID)
+BATCH_INSTANCE_URL = EA_BASE_URL + 'api/essential-utility/v3/repositories/{0}/instances/batch'.format(REPO_ID)
 
 class LoginApi:
     def __init__(self, cli = True):
@@ -49,7 +51,8 @@ class LoginApi:
         })
         headers = {
         'Content-Type': 'application/json',
-        'x-api-key': EA_API_KEY if self.cli else apikey
+        'x-api-key': EA_API_KEY if self.cli else apikey,
+        'Host': 'shuteaching2.essentialintelligence.com',
         }
         response = requests.request("POST", url, headers=headers, data=payload)
 
@@ -96,7 +99,7 @@ class BusinessCapabilityApi:
         data = self._prepare_dataset(data)
         headers = { 'Content-type': 'application/json', 'Authorization': self.token, 'x-api-key': EA_API_KEY}
 
-        response = requests.request("POST", INSTANCE_URL, headers=headers, data=data)
+        response = requests.request("POST", BATCH_INSTANCE_URL, headers=headers, data=data)
 
         if response.status_code != 200:
             logging.error(response.text)
@@ -139,10 +142,11 @@ class InformationConcept:
                 "sourceName": "Essential Launchpad",
                 "id": "BC56"
             }]
-        self.url = INSTANCE_URL
+        self.url = SINGLE_INSTANCE_URL
         self.headers = { 
             'Authorization': 'Bearer {0}'.format(access_token),
             'x-api-key': EA_API_KEY,
+            'Content-Type': 'application/json'
             }
 
     def upload_data(self, data: dict):
@@ -161,51 +165,72 @@ class InformationConcept:
         info_objective_name = "SAP Graph Information Concept"
         info_objective_class = "Information_Concept"
 
-        self._create_business_domain({ "name" : business_domain_name, "className": business_domain_class})
-        self._create_information_domain({ "name": info_domain_name, "className": info_domain_class })
-        self._create_information_views({ "name": info_view_name, "className": info_view_class })
-        self._create_information_objectives({ "name": info_objective_name, "className": info_objective_class })
-        
+        bd_response = self._create_business_domain({ "name" : business_domain_name, "className": business_domain_class})
+        if bd_response.status_code != 200:
+            return bd_response
+        id_response = self._create_information_domain({ "name": info_domain_name, "className": info_domain_class })
+        if id_response.status_code != 200:
+            return id_response
+        civ_response = self._create_information_views({ "name": info_view_name, "className": info_view_class })
+        if civ_response.status_code != 200:
+            return civ_response
+        cio_response = self._create_information_objectives({ "name": info_objective_name, "className": info_objective_class })
+        if cio_response.status_code != 200:
+            return cio_response
         request_data = {
             "name": data["name"],
-            "className": data["Information_Concept"],
+            "className": data["className"],
             "description": "This is a automated generation for SAP Graph visualization",
             "belongs_to_business_domain_information": {
                 "name": business_domain_name,
-                "className": business_domain_class
+                "className": business_domain_class,
+                "id": bd_response.json()['id']
             },
             "info_concept_info_domain": {
                 "name": info_domain_name,
-                "className": info_domain_class
+                "className": info_domain_class,
+                "id": id_response.json()['id']
             },
-            "has_information_views": {
+            "has_information_views": [{
                 "name": info_view_name,
-                "className": info_view_class
-            },
-            "relevant_information_objectives": {
+                "className": info_view_class,
+                "id": civ_response.json()['id']
+            }],
+            "relevant_information_objectives": [{
                 "name": info_objective_name,
-                "className": info_objective_class
-            },
+                "className": info_objective_class,
+                "id": cio_response.json()['id'],
+            }],
             "externalIds": self.external_ids,
         }
         
         return self._send_post_request(request_data)
 
     def _create_business_domain(self, data: dict):
+        data['externalIds'] = self.external_ids
         return self._send_post_request(data)
     
     def _create_information_domain(self, data: dict):
+        data['externalIds'] = self.external_ids
         return self._send_post_request(data)
 
     def _create_information_views(self, data: dict):
+        data['externalIds'] = self.external_ids
         return self._send_post_request(data)
 
     def _create_information_objectives(self, data: dict):
+        data['externalIds'] = self.external_ids
         return self._send_post_request(data)
 
     def _send_post_request(self, data):
-        response = requests.request('POST', self.url, headers=self.headers, data=data)
+        payload = json.dumps(data)
+        response = requests.request('POST', self.url, headers=self.headers, data=payload)
+        print(curlify.to_curl(response.request))
         if response.status_code != 200:
-            print('Response has an error ' + response)
+            print('Response has an error ' + str(response))
 
         return response
+
+    def already_exists_send_data(self, data):
+        # TODO If already exist just send its details or only id
+        pass

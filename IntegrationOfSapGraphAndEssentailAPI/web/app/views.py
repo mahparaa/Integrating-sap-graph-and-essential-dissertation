@@ -46,6 +46,11 @@ def sap_graph(request):
     return render(request, 'sap-graph.djt.html', context)
 
 def login_to_ea(request):
+    del request.session
+
+    response = HttpResponse("Session deleted")
+    response.delete_cookie('sessionid')
+
     return render(request, 'ea-login.djt.html')
 
 def handle_login_to_ea(request):
@@ -154,3 +159,18 @@ def load_sap_graph_nodes_and_edges(request):
 
     network = sp_grahp.create_graph(sp_grahp.relationship_with_entity)
     return JsonResponse({ 'edges': network.edges, 'nodes': network.nodes  })
+
+
+
+def create_information_concepts(request):
+    access_token = request.session.get('bearer_token')
+    info = ea.InformationConcept(access_token)
+    request_data = { 
+        "name": "SAP Graph Information Concept",
+        "className": "Information_Concept"
+    }
+    response = info.upload_data(request_data)
+    if response.status_code != 200:
+        return JsonResponse({ "success": False, "data": response.json() })
+    
+    return JsonResponse( { "success": True, "data": response.json() })
