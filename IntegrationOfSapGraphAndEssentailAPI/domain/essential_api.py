@@ -65,8 +65,8 @@ class LoginApi:
             self.store_token()
 
 class BusinessCapabilityApi:
-    def __init__(self, login: LoginApi) -> None:
-        self.token = login.get_token()['access_token']
+    def __init__(self, token: str ) -> None:
+        self.token = token
 
     def upload_data(self, data) -> None:
         logging.info('Uploading business capabilities')
@@ -107,3 +107,24 @@ class BusinessCapabilityApi:
             instances.append(instance_data)
         
         return { "instances": instances }
+    
+
+
+class InformationConcept:
+    def __init__(self, access_token):
+        self.token = access_token
+
+    def upload_data(self, data: dict):
+        pass
+
+    def _create_concept(self):
+        pass
+
+    def _create_business_domain(self):
+        pass
+
+    def _create_information_views(self):
+        pass
+
+    def _create_information_objectives(self):
+        pass

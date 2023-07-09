@@ -6,6 +6,7 @@ urlpatterns = [
     path('/', views.index),
     path('sap-graph', views.sap_graph),
     path('login/sap', views.login_sap),
+    path('logout/sap', views.sap_logout_remove_cookies),
     path('sap/callback', views.sap_login_callback),
     path('sap/download', views.sap_sync_all_the_entites),
     path('sap/network', views.load_sap_graph_nodes_and_edges),

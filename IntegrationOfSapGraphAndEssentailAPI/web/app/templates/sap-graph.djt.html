@@ -9,7 +9,9 @@
                     <button class='btn btn-primary'>SAP Login</button>
                 </form>
             {% else %}
-                <button class='btn btn-secondary'>SAP Logout</button>
+                <form action='/logout/sap'>
+                    <button class='btn btn-secondary'>SAP Logout</button>
+                </form>
                 <button id='downloadBtn' class='btn btn-primary' onclick="downloadEntities()">Sync All Entities ({{total_synced}})</button>
                 <button id='neo4jBtn' class='btn btn-primary' onclick="uploadToNeo4j()">Sync With Neo4j</button>
                 <button id='loadGraphBtn' class='btn btn-primary' onclick="loadGraph()">Load Graph Network</button>

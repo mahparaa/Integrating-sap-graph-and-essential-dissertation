@@ -35,7 +35,7 @@ def sap_graph(request):
     
     current_time = int(time.time()) + int(expires)
     is_expired = False
-    if current_time < int(time.time()):
+    if current_time < int(time.time()) or expires == 0:
         is_expired = True
     
     context = {
@@ -46,12 +46,7 @@ def sap_graph(request):
     return render(request, 'sap-graph.djt.html', context)
 
 def login_to_ea(request):
-    session = request.session
-    has_session = False
-    if session.get('access_token'):
-        has_session = True
-    context = { "has_session": has_session }
-    return render(request, 'ea-login.djt.html', context = context)
+    return render(request, 'ea-login.djt.html')
 
 def handle_login_to_ea(request):
     api_key = request.POST.get('apiKey')
@@ -78,7 +73,13 @@ def handle_login_to_ea(request):
     return response
 
 def essentail_architecture(request):
-    return render(request, 'essential-architecture.djt.html')
+    session = request.session
+    has_session = False
+    
+    if not session.get('bearer_token') == None:
+        has_session = True
+    context = { "has_session": has_session }
+    return render(request, 'essential-architecture.djt.html', context = context)
 
 def login_sap(request):
     url = '{0}/oauth/authorize?client_id={1}&redirect_uri={2}&response_type=code'.format(TOKEN_URL, CLIENT_ID, REDIRECT_URI)
@@ -103,6 +104,17 @@ def sap_login_callback(request):
     response.set_cookie('access_token', result['access_token'])
     response.set_cookie('refresh_token', result['refresh_token'])
     response.set_cookie('expires_in', result['expires_in'])
+    response['Location'] = '/sap-graph'
+    response.status_code = 302
+
+    return response
+
+def sap_logout_remove_cookies(request):
+   
+    response = HttpResponse('Response')
+    response.delete_cookie('access_token')
+    response.delete_cookie('refresh_token')
+    response.delete_cookie('expires_in')
     response['Location'] = '/sap-graph'
     response.status_code = 302
 
