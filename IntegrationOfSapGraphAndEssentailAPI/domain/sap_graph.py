@@ -13,10 +13,13 @@ def get_name(input_string: str):
 relationship_with_entity = {}
 def fetch_references(title, properties):
     new_list_of_references = []
-
     for property in properties:
+        attributes_collections = {}
         property_insight = properties[property]
-        
+        _type = properties[property].get('type')
+        attributes_collections['attribute_name'] = property
+        attributes_collections['attribute_type'] = _type if _type else 'object'
+
         if 'allOf' in property_insight:
             list_of_references = property_insight['allOf']
             for reference in list_of_references:
@@ -24,8 +27,9 @@ def fetch_references(title, properties):
                 ref = get_name(ref)
                 if ref is None:
                     continue
-
-                new_list_of_references.append(ref)
+                
+                attributes_collections['ref'] = ref
+                new_list_of_references.append(attributes_collections)
         
         if 'items' in property_insight:
             reference = property_insight['items']
@@ -34,7 +38,8 @@ def fetch_references(title, properties):
                 ref = get_name(ref)
                 if ref is None:
                     continue
-                new_list_of_references.append(ref)
+                attributes_collections['ref'] = ref
+                new_list_of_references.append(attributes_collections)
             elif isinstance(reference, list):
                 for referen in reference:
                     if '$ref' in referen:
@@ -42,7 +47,9 @@ def fetch_references(title, properties):
                         ref = get_name(ref)
                         if ref is None:
                             continue
-                    new_list_of_references.append(ref)
+                    attributes_collections['ref'] = ref
+                    new_list_of_references.append(attributes_collections)
+
 
     if not title in relationship_with_entity:
         relationship_with_entity[title] = new_list_of_references
@@ -90,12 +97,13 @@ def create_graph(d: dict, html_file = 'create_graph.html', create_html = False):
 
     for source, targets in d.items():
         for target in targets:
-            s_group = get_split_for_group(target)
+            t_label = target['ref']
+            s_group = get_split_for_group(t_label)
             color = val_map.get(s_group, 'black')
             shape = val_shap.get(s_group, 'diamond')
             nt.add_node(source, color=color, label = source, shape=shape, font={'size': 20, 'bold': True} )
-            nt.add_node(target, color=color, label = target, shape=shape, font={'size': 20, 'bold': True})
-            nt.add_edge(source, target, color=color, width=3)
+            nt.add_node(t_label, color=color, label = t_label, shape=shape, font={'size': 20, 'bold': True})
+            nt.add_edge(source, t_label, color=color, width=3)
 
     if create_html:
         nt.save_graph(html_file)
