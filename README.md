@@ -39,7 +39,7 @@ We click on the Essential Architecture, we can login by providing the username, 
 ![Alt text](./screenshots/create-info-concept.PNG "Enterprise Arhitecture")
 
 
-### Future Work
+### Future Work (Currently Looking)
 
 We are working on "Data Object" and "Data Object Attribute", which will capture data provided by the SAP Graph API. These data can be then visualized using Essentail Architecture viewer.
 
