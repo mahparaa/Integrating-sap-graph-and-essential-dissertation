@@ -74,3 +74,8 @@ Following are the list needed to investigate, if these are algorithms are useful
 - Graph embedding techniques (e.g., node2vec, GraphSAGE)
 - Graph neural networks (GNNs)
 - Graph pattern mining algorithms
+
+Lastly, for Standardized Vocabularies and Ontologies in Link Enterprise Data and automate the process following machine learning algorithms can be explored.
+- Term Extraction
+- Relationship Extraction
+- Ontology Alignment and Mapping (need to explore more in detail on this)
