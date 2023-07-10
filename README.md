@@ -25,3 +25,9 @@ To run the application we need to install Python and the required dependency `dj
 2. Running the server `python manage.py runserver`
 3. Go to browser and enter http://localhost:8000
 
+### Screenshots
+
+When click on the SAP Graph and Login to your SAP Graph. Search for Entity for their relationship or Click on "Load Graph Network". This will display the entities with relationships on the Graph
+
+![Alt text](screenshots/sap-graph-entities.png?raw=true "Relationship")
+
