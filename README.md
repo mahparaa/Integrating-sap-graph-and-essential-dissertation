@@ -29,5 +29,15 @@ To run the application we need to install Python and the required dependency `dj
 
 When click on the SAP Graph and Login to your SAP Graph. Search for Entity for their relationship or Click on "Load Graph Network". This will display the entities with relationships on the Graph
 
-![Alt text](screenshots/sap-graph-entities.png?raw=true "Relationship")
+![Alt text](./screenshots/sap-graph-entities.PNG "Relationship")
+
+
+We click on the Essential Architecture, we can login by providing the username, password and API Key provided by Essentail Architecture. Then Using the button we will be able to create the "Information Concept", "Business Domain", "Information Domain", and "Information View". This data captured can be seen in the Essentail Architecture portal.
+
+![Alt text](./screenshots/create-info-concept.PNG "Enterprise Arhitecture")
+
+
+### Future Work
+
+We are working on "Data Object" and "Data Object Attribute", which will capture data provided by the SAP Graph API. These data can be then visualized using Essentail Architecture viewer.
 
