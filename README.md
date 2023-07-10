@@ -41,3 +41,34 @@ We click on the Essential Architecture, we can login by providing the username, 
 
 We are working on "Data Object" and "Data Object Attribute", which will capture data provided by the SAP Graph API. These data can be then visualized using Essentail Architecture viewer.
 
+Future works also includes applying machine learning alogrithms for identifying common attributes for generalization and Specialization. Using the generated data by the algorithm, it could be forward to the Essential Architecture to create a effective views.
+
+Following are the list needed to investigate, if these are algorithms are useful for the application.
+
+##### For Attribute Clustering or Similarity Analysis:
+- K-means clustering
+- Hierarchical clustering
+- DBSCAN (Density-Based Spatial Clustering of Applications with Noise)
+- Spectral clustering
+- Affinity propagation
+- Cosine similarity
+- Jaccard similarity
+- Euclidean distance-based similarity measures
+
+##### For Rule-Based Classification or Pattern Matching:
+- Decision Trees (e.g., ID3, C4.5, CART)
+- Random Forests
+- Gradient Boosting (e.g., XGBoost, LightGBM)
+- Association Rule Mining (e.g., Apriori, FP-Growth)
+- Naive Bayes Classifier
+- Support Vector Machines (SVM)
+- Neural Networks (e.g., Multi-layer Perceptron)
+- Rule Induction algorithms (e.g., RIPPER, C5.0)
+
+##### For Graph-based Techniques:
+- Network clustering algorithms (e.g., Louvain, Girvan-Newman)
+- Community detection algorithms (e.g., Modularity-based methods, Label Propagation)
+- PageRank algorithm
+- Graph embedding techniques (e.g., node2vec, GraphSAGE)
+- Graph neural networks (GNNs)
+- Graph pattern mining algorithms
