@@ -2,6 +2,8 @@
 
 The project is to connect with SAP Graph and using the returned metadata to capture data and visualize in Essential Architecture. 
 
+Right now, using the Link Enterprise Data framework, the application can be used to see graphical representation of entites, and also queries to get the linked data. Since, enterprise architecture "Data Management" and "Application Portfolio Management" is not available to explore, essential provides "Information and Data", to leverage its power, Data Object can be used, for this Generalization and Specialization is needed, but we need to mine the attributes to extract useful information. Therefore we need to perform some machine learning, data mining techniques.
+
 ### Project Structure
 1. web - Automation for browser based application to connect to SAP Graph, visualize the entities and EA for capture and views
 2. cli - Currently in progress but provides the command-line tool to automate the process
