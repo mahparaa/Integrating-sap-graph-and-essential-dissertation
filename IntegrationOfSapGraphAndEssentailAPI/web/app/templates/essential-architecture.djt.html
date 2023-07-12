@@ -1,18 +1,21 @@
 {% extends 'base.html' %}
 {% block content %}
     <div class="container m-4">
-        <div class='row'>
-            <div class="col-lg">
-                Essential Architecture Automation
-            </div>
+        <div class='row h4'>
+            Essential Architecture Automation
         </div>
         {% if not has_session %}
         <a href='/ea/login'>Login To EA</a>
         {% else %}
-        <div>You are logged in to EA</div>
-        <a href='/ea/login' class='btn btn-secondary'>Logout To EA</a>
-        <input id='csrfToken' style='display: none' value='{{ csrf_token }}' />
-        <button class='btn btn-primary' onclick="createInformationConcepts()">Create Information Concept</button>
+        <div class='row'>
+            <div>You are logged in to EA</div>
+            <a href='/ea/login' class='btn btn-secondary ml-2'>Logout To EA</a>
+            <input id='csrfToken' style='display: none' class='ml-2' value='{{ csrf_token }}' />
+            <button class='btn btn-primary ml-2' onclick="createInformationConcepts()">Create Information Concept</button>
+        </div>
+        <div class='row mt-2'>
+            <button class='btn btn-primary'>Process with GSpan Mining</button>
+        </div>
         {% endif %}
     </div>
     
