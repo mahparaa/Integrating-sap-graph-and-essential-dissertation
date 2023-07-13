@@ -2,7 +2,8 @@ from gspan_mining.config import parser
 from gspan_mining.main import main
 from gspan_mining.graph import Graph, Vertex
 from pyvis.network import Network
-
+from apyori import apriori
+import pandas as pd
 
 dir = '../data/gspan/graph.data'
 nt = Network()
@@ -18,6 +19,66 @@ def apply_gspan(G: Network):
 
     for i, grp in enumerate(gs.graphs.values()):
         _convert_string_to_network(grp, i)
+
+
+def apply_association_rule_mining(entities_relationsips: dict):
+    transaction = []
+    for node_name_key, entities in entities_relationsips.items():
+        parent_node = [ node_name_key, 
+                       '', 
+                       '',
+                       '' 
+        ]
+        # attributes = _get_attribute_details(entities)
+        # row = { **parent_node, **attributes }
+
+        transaction.append(parent_node)
+
+        for relation in entities['relationships']:
+            attribute_name = relation['attribute_name']
+            attribute_type = relation['attribute_type']
+            node_name = relation['ref']
+            transaction.append([ node_name, 
+                               attribute_name,
+                               attribute_type,
+                               node_name_key 
+                               ])
+    
+    # df = pd.DataFrame(transaction)
+    # print(df.head())
+    
+    association_rules = apriori(transaction, min_support=0.0009, min_confidence=0.2, min_lift=3, min_length=2)
+    association_results = list(association_rules)
+    
+    print(len(association_results))
+    data = []
+    for rule in association_results:
+        print(rule)
+        antecedents = rule.ordered_statistics[0].items_base
+        consequents = rule.ordered_statistics[0].items_add
+        support = rule.support
+        confidence = rule.ordered_statistics[0].confidence
+
+        # Create Data Objects with entity names
+        data_object = {
+            'antecedents': antecedents,
+            'consequents': consequents,
+            'support': support,
+            'confidence': confidence
+        }
+        print(data_object)
+        data.append(data_object)
+    # print(data)
+
+def _get_attribute_details(data: dict) -> dict:
+    new_dict = {}
+    for key, value in data.items():
+        if key == 'relationships':
+            continue
+        for k, v in value.items():
+            new_dict[k] = v
+    return new_dict
+
 
 def _convert_string_to_network(grp: Graph, i: int) -> Network:
     vertices = grp.vertices

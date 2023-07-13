@@ -13,12 +13,15 @@ def get_name(input_string: str):
 relationship_with_entity = {}
 def fetch_references(title, properties):
     new_list_of_references = []
+    other_properties_collections = {}
     for property in properties:
         attributes_collections = {}
         property_insight = properties[property]
         _type = properties[property].get('type')
         attributes_collections['attribute_name'] = property
         attributes_collections['attribute_type'] = _type if _type else 'object'
+        other_properties_collections[property] = _type
+       
 
         if 'allOf' in property_insight:
             list_of_references = property_insight['allOf']
@@ -52,11 +55,11 @@ def fetch_references(title, properties):
 
 
     if not title in relationship_with_entity:
-        relationship_with_entity[title] = new_list_of_references
+        relationship_with_entity[title] = {'relationships': new_list_of_references, 'attributes': other_properties_collections }
     else:
-        previous_references = relationship_with_entity[title]
+        previous_references = relationship_with_entity[title]['relationships']
         new_list_of_references.extend(previous_references)
-        relationship_with_entity[title] = new_list_of_references
+        relationship_with_entity[title] = {'relationships': new_list_of_references, 'attributes': relationship_with_entity[title]['attributes']}
 
     return relationship_with_entity
 
@@ -96,7 +99,7 @@ def create_graph(d: dict, html_file = 'create_graph.html', create_html = False):
     }
 
     for source, targets in d.items():
-        for target in targets:
+        for target in targets['relationships']:
             t_label = target['ref']
             s_group = get_split_for_group(t_label)
             color = val_map.get(s_group, 'black')

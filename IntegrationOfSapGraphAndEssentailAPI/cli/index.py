@@ -24,9 +24,10 @@ if __name__ == '__main__':
     html_file = 'network_graph.html'
     logging.info("Graph created to visualize open " + html_file + " in browser")
 
-    graph = sap_graph.create_graph(sap_graph.relationship_with_entity, html_file)
-    dm.apply_gspan(graph)
-
+    # graph = sap_graph.create_graph(sap_graph.relationship_with_entity, html_file)
+    # dm.apply_gspan(graph)
+    dm.apply_association_rule_mining(sap_graph.relationship_with_entity)
+    
     # connect_neo4j.create_data(graph)
     
     # login = essential_api.LoginApi()
