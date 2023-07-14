@@ -47,12 +47,12 @@ Using association rule mining library `apyori` and setting the configuration wit
 
 An association rule in data mining is a pattern that describes the relationship between items or attributes in a dataset. It is commonly used to identify associations, dependencies, or co-occurrences between items based on their occurrences in transactions or events.
 
-####### Entity Similarity:
+**Entity Similarity:**
 Association rules can help determine the similarity between entities. If certain entities frequently occur together in transactions or events, it suggests that they have a similar pattern or usage. This information can be used to identify related or similar entities within a dataset or to group entities based on their associations.
 
 ![Alt text](./screenshots/association-rule-test-1.PNG "Association Rule Testing 1")
 
-####### Attribute Associations:
+**Attribute Associations:**
 Association rule mining can uncover associations between attributes within entities. By examining the relationships between different attributes, you can identify attribute dependencies or co-occurrence patterns.
 
 
