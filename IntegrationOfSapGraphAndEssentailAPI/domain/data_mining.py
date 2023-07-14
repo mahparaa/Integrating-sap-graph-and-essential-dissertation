@@ -23,12 +23,15 @@ def apply_gspan(G: Network):
         _convert_string_to_network(grp, i)
 
 
-def apply_association_rule_mining(entities_relationsips: dict):
+def apply_association_rule_mining(entities_relationsips: dict,
+                                  min_support = 0.0009,
+                                  min_confidence = 0.2,
+                                  min_lift = 3,
+                                  min_length = 2,
+                                  cli = True):
     transaction = []
     for node_name_key, entities in entities_relationsips.items():
         parent_node = [ node_name_key, 
-                    #    '', 
-                    #    '',
                        '' 
         ]
         # attributes = _get_attribute_details(entities)
@@ -37,19 +40,15 @@ def apply_association_rule_mining(entities_relationsips: dict):
         transaction.append(parent_node)
 
         for relation in entities['relationships']:
+            # TODO use attributes?
             # attribute_name = relation['attribute_name']
             # attribute_type = relation['attribute_type']
             node_name = relation['ref']
             transaction.append([ node_name, 
-                            #    '',
-                            #    '',
                                node_name_key 
                                ])
-    
-    # df = pd.DataFrame(transaction)
-    # print(df.head())
-    
-    association_rules = apriori(transaction, min_support=0.0009, min_confidence=0.2, min_lift=3, min_length=2)
+            
+    association_rules = apriori(transaction, min_support=min_support, min_confidence=min_confidence, min_lift=min_lift, min_length=min_length)
     association_results = list(association_rules)
     G = Network(directed=True)
 
@@ -75,8 +74,10 @@ def apply_association_rule_mining(entities_relationsips: dict):
         }
         # print(data_object)
         data.append(data_object)
-    print(data)
-    G.save_graph('ar-mining.html')
+    
+    if cli:
+        G.save_graph('ar-mining.html')
+    return (G, data)
     
 
 def _get_attribute_details(data: dict) -> dict:

@@ -58,7 +58,7 @@ class LoginApi:
 
         if response.status_code != 200:
             logging.error(response.text)
-            return
+            return response
         
         data = response.json()
         self.AUTHORIZATION_TOKEN['access_token'] = data['bearerToken']

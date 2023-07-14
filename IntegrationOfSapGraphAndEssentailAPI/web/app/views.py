@@ -15,6 +15,7 @@ sys.path.append('..')
 from domain import sap_graph as sp_grahp
 from domain import connect_neo4j as c_neo4j
 from domain import essential_api as ea
+from domain import data_mining as dm
 
 CLIENT_ID = os.getenv("client.id")
 CLIENT_SECRET = os.getenv('client.secret')
@@ -25,6 +26,15 @@ GRAPH_ID = os.getenv('graph.id')
 APP_INT_ID = os.getenv('application.interface.key')
 
 sap_dir = '../data/sap/'
+
+def _get_network():
+    json_files = [pos_json for pos_json in os.listdir(sap_dir) if pos_json.endswith('.json')]
+    for json_file in json_files:
+        with open(sap_dir + json_file, 'r') as f:
+            sp_grahp.get_all_component(json.loads(f.read()))
+
+    network = sp_grahp.create_graph(sp_grahp.relationship_with_entity)
+    return network
 
 def index(request): 
     return render(request, 'index.djt.html')
@@ -62,6 +72,10 @@ def handle_login_to_ea(request):
     login.login_get_oauth_token(username, password, api_key)
     token_details = login.get_token()
     
+    if not 'access_token' in token_details:
+        response = HttpResponse("Login Unsuccessful")
+        return response
+
     session = SessionStore()
     session['bearer_token'] = token_details['access_token']
     session['refresh_token'] = token_details['refresh_token']
@@ -130,12 +144,7 @@ def sap_execute_neo4j_query(request):
     return render(request, 'sap-graph.djt.html')
 
 def sync_to_neo4j(request):
-    json_files = [pos_json for pos_json in os.listdir(sap_dir) if pos_json.endswith('.json')]
-    for json_file in json_files:
-        with open(sap_dir + json_file, 'r') as f:
-            sp_grahp.get_all_component(json.loads(f.read()))
-
-    network = sp_grahp.create_graph(sp_grahp.relationship_with_entity)
+    network = _get_network()
     c_neo4j.create_data(network)
 
     return JsonResponse({ 'success': True })
@@ -174,3 +183,15 @@ def create_information_concepts(request):
         return JsonResponse({ "success": False, "data": response.json() })
     
     return JsonResponse( { "success": True, "data": response.json() })
+
+
+def handle_ar_mining(request):
+    min_support = float(request.GET.get('minSupport'))
+    confidence = float(request.GET.get('confidence'))
+    lift = float(request.GET.get('lift'))
+    min_length = float(request.GET.get('minLength'))
+
+    network = _get_network()
+    (network, data) = dm.apply_association_rule_mining(sp_grahp.relationship_with_entity, min_support=min_support, min_confidence=confidence, min_length=min_length, min_lift=lift, cli = False)
+
+    return JsonResponse({ 'edges': network.edges, 'nodes': network.nodes  }) 

@@ -14,11 +14,19 @@
             <button class='btn btn-primary ml-2' onclick="createInformationConcepts()">Create Information Concept</button>
         </div>
         <div class='row mt-2'>
-            <button class='btn btn-primary'>Process with GSpan Mining</button>
+            <div class='col-sm-3'>
+                <button id='gspanBt' class='btn btn-success'>Process with GSpan Mining</button>
+            </div>
+            <div class='col-sm-4'>
+                <button id='arBtn' class='btn btn-success' onclick='loadArGraph()'>Process with Association Rule Mining</button>
+            </div>
+        </div>
+        <div id='spinner' class="spinner-border text-primary hidden d-none" role="status">
+            <span class="sr-only">Loading...</span>
         </div>
         {% endif %}
     </div>
-    
+    <div id="mynetwork" class='border'></div>
     <script>
         function createInformationConcepts() {
             fetch('/ea/create/information/concepts', { 
@@ -34,6 +42,34 @@
             .catch(error => {
                 console.error('Error:', error);
             });
+        }
+
+        function loadArGraph() {
+            $('#spinner').removeClass("d-none");
+            $("#arBtn").prop("disabled", true);
+
+            const minLength = 2
+            const confidence = 0.2
+            const minSupport = 0.0009
+            const lift = 2
+
+            fetch(`ea/apply/armining?minSupport=${minSupport}&confidence=${confidence}&lift=${lift}&minLength=${minLength}`)
+                .then(response => response.json())
+                .then(data => {
+                    const nodes = new vis.DataSet(data.nodes);
+                    const edges = new vis.DataSet(data.edges);
+    
+                    const container = document.getElementById('mynetwork');
+                
+                    const newtworkData = {
+                        nodes: nodes,
+                        edges: edges
+                    };
+                    const options = {};
+                    const network = new vis.Network(container, newtworkData, options);
+                    $("#spinner").addClass("d-none");
+                    $("#arBtn").prop("disabled", false);
+                });
         }
     </script>    
 {% endblock %}
