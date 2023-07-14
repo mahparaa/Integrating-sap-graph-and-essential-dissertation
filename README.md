@@ -39,6 +39,25 @@ We click on the Essential Architecture, we can login by providing the username, 
 ![Alt text](./screenshots/create-info-concept.PNG "Enterprise Arhitecture")
 
 
+### Progress Update - 1
+
+Using association rule mining library `apyori` and setting the configuration with following configuration `min_support=0.0009, min_confidence=0.2, min_lift=3, min_length=2`, The SAP Graph has returned the grouped entities with possible similarity. Decreasing the min_support will results in more rules however it is very slow.
+
+###### What is Association Rule and how it can be used in entities metadata?
+
+An association rule in data mining is a pattern that describes the relationship between items or attributes in a dataset. It is commonly used to identify associations, dependencies, or co-occurrences between items based on their occurrences in transactions or events.
+
+####### Entity Similarity:
+Association rules can help determine the similarity between entities. If certain entities frequently occur together in transactions or events, it suggests that they have a similar pattern or usage. This information can be used to identify related or similar entities within a dataset or to group entities based on their associations.
+
+![Alt text](./screenshots/association-rule-test-1.PNG "Association Rule Testing 1")
+
+####### Attribute Associations:
+Association rule mining can uncover associations between attributes within entities. By examining the relationships between different attributes, you can identify attribute dependencies or co-occurrence patterns.
+
+
+
+
 ### Future Work (Currently Looking)
 
 We are working on "Data Object" and "Data Object Attribute", which will capture data provided by the SAP Graph API. These data can be then visualized using Essentail Architecture viewer.

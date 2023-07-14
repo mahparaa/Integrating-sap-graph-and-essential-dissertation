@@ -3,7 +3,9 @@ from gspan_mining.main import main
 from gspan_mining.graph import Graph, Vertex
 from pyvis.network import Network
 from apyori import apriori
-import pandas as pd
+import networkx as nx
+from pyvis.network import Network
+import matplotlib.pyplot as plt
 
 dir = '../data/gspan/graph.data'
 nt = Network()
@@ -25,8 +27,8 @@ def apply_association_rule_mining(entities_relationsips: dict):
     transaction = []
     for node_name_key, entities in entities_relationsips.items():
         parent_node = [ node_name_key, 
-                       '', 
-                       '',
+                    #    '', 
+                    #    '',
                        '' 
         ]
         # attributes = _get_attribute_details(entities)
@@ -35,12 +37,12 @@ def apply_association_rule_mining(entities_relationsips: dict):
         transaction.append(parent_node)
 
         for relation in entities['relationships']:
-            attribute_name = relation['attribute_name']
-            attribute_type = relation['attribute_type']
+            # attribute_name = relation['attribute_name']
+            # attribute_type = relation['attribute_type']
             node_name = relation['ref']
             transaction.append([ node_name, 
-                               attribute_name,
-                               attribute_type,
+                            #    '',
+                            #    '',
                                node_name_key 
                                ])
     
@@ -49,26 +51,33 @@ def apply_association_rule_mining(entities_relationsips: dict):
     
     association_rules = apriori(transaction, min_support=0.0009, min_confidence=0.2, min_lift=3, min_length=2)
     association_results = list(association_rules)
-    
+    G = Network(directed=True)
+
     print(len(association_results))
     data = []
     for rule in association_results:
-        print(rule)
         antecedents = rule.ordered_statistics[0].items_base
         consequents = rule.ordered_statistics[0].items_add
         support = rule.support
         confidence = rule.ordered_statistics[0].confidence
 
+        label_antecendents = list(antecedents)[0]
+        label_consequents = list(consequents)[0]
+        G.add_node(label_antecendents)
+        G.add_node(label_consequents)
+        G.add_edge(label_antecendents, label_consequents)
         # Create Data Objects with entity names
         data_object = {
-            'antecedents': antecedents,
-            'consequents': consequents,
+            'antecedents': label_antecendents,
+            'consequents': label_consequents,
             'support': support,
             'confidence': confidence
         }
-        print(data_object)
+        # print(data_object)
         data.append(data_object)
-    # print(data)
+    print(data)
+    G.save_graph('ar-mining.html')
+    
 
 def _get_attribute_details(data: dict) -> dict:
     new_dict = {}
