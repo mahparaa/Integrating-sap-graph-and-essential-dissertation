@@ -191,7 +191,14 @@ def handle_ar_mining(request):
     lift = float(request.GET.get('lift'))
     min_length = float(request.GET.get('minLength'))
 
+    token = request.session.get('bearer_token')
+
     network = _get_network()
     (network, data) = dm.apply_association_rule_mining(sp_grahp.relationship_with_entity, min_support=min_support, min_confidence=confidence, min_length=min_length, min_lift=lift, cli = False)
+    doObj = ea.DataObjectAndAttributes(network, sp_grahp.relationship_with_entity, token = token, cli = False)
+    status_history = doObj.process()
+    is_ea_successful = True
+    if False in status_history:
+        is_ea_successful = False
 
-    return JsonResponse({ 'edges': network.edges, 'nodes': network.nodes  }) 
+    return JsonResponse({ 'edges': network.edges, 'nodes': network.nodes, 'is_ea_successful': is_ea_successful  }) 

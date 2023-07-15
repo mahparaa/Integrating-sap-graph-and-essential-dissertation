@@ -6,6 +6,7 @@ import json
 import pandas as pd
 import math
 import curlify
+from pyvis.network import Network 
 
 logging.basicConfig(level = logging.INFO)
 
@@ -19,6 +20,8 @@ EA_PASSWORD = os.getenv('EA_PASSWORD')
 REPO_ID = os.getenv('REPOSITORY_ID')
 SINGLE_INSTANCE_URL = EA_BASE_URL + 'api/essential-utility/v3/repositories/{0}/instances'.format(REPO_ID)
 BATCH_INSTANCE_URL = EA_BASE_URL + 'api/essential-utility/v3/repositories/{0}/instances/batch'.format(REPO_ID)
+DO_CLASSES_INSTANCES_URL = EA_BASE_URL + '/api/essential-utility/v3/repositories/{0}/classes/Data_Object/instances'.format(REPO_ID)
+CLEAR_URL = EA_BASE_URL + '/api/essential-utility/v2/repositories/{0}/instances/'.format(REPO_ID)
 
 class LoginApi:
     def __init__(self, cli = True):
@@ -234,3 +237,92 @@ class InformationConcept:
     def already_exists_send_data(self, data):
         # TODO If already exist just send its details or only id
         pass
+
+
+class DataObjectAndAttributes:
+    def __init__(self, nodes: Network, sap_graph_with_attributes: dict, token: str, cli = True):
+        self.nodes = nodes
+        self.sap_graph = sap_graph_with_attributes
+        self.cli = cli
+        self.url = SINGLE_INSTANCE_URL
+        self.headers = { 
+            'Authorization': 'Bearer {0}'.format(token),
+            'x-api-key': EA_API_KEY,
+            'Content-Type': 'application/json'
+            }
+
+
+    def process(self):
+        self._clear_all_data_object()
+        payload = {
+            'className': 'Data_Object',
+        }
+
+        generalisation_data_object = dict()
+        specialisation_data_object = dict()
+        status_history = []
+        for node in self.nodes.nodes:
+            node_id = node['id']
+            neigbhours = self.nodes.neighbors(node_id)
+            g_payloads = []
+
+            got_node = self._get_instance(node_id)
+            if got_node != None:
+                continue
+        
+            if len(neigbhours) != 0:
+                for neigbhour in neigbhours:
+                    existed_neigbhor = generalisation_data_object.get(neigbhour)
+                    g_payload = {
+                        "className": "Data_Object",
+                        "name": neigbhour,
+                    }
+
+                    if existed_neigbhor:
+                        g_payload['id'] = existed_neigbhor
+
+                    response = self._add_data_object(g_payload)
+                    if response.status_code == 200:
+                        generalisation_data_object[neigbhour] = response.json()['id']
+                        g_payload['id'] = response.json()['id']
+
+                    g_payloads.append(g_payload)
+
+                payload['name'] = node_id
+                payload['data_object_generalisations'] = g_payloads
+            # else:
+            #     print('Spealization')
+            # print(node_id + ' => ' + str(neigbhours))
+            parent_data_object_response = self._add_data_object(payload)
+            status_history.append(parent_data_object_response.status_code)
+
+        return status_history
+    def _add_data_object(self, data):
+        payload = json.dumps(data)
+        response = requests.request('POST', self.url, headers=self.headers, data=payload)
+    
+        if response.status_code != 200:
+            print('Error - ' + str(response))
+        return response
+    
+    def _get_instance(self, node_id):
+        response = requests.request('GET', DO_CLASSES_INSTANCES_URL, headers=self.headers)
+        data = response.json()['instances']
+
+        for d in data:
+            if d['name'] == node_id:
+                return d
+
+        return None
+    
+    def _clear_all_data_object(self):
+        response = requests.request('GET', DO_CLASSES_INSTANCES_URL, headers=self.headers)
+        data = response.json()['instances']
+        # DELETE IT
+        for d in data:
+            url = CLEAR_URL + d['id']
+            response = requests.request('DELETE', url, headers=self.headers)
+            if response.status_code == 200:
+                print('Deleted instance Id => ' + d['id'])
+            else:
+                print('ERROR Deleting ' + str(response.json()))

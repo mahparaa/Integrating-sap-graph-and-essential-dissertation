@@ -64,7 +64,7 @@ def apply_association_rule_mining(entities_relationsips: dict,
         label_consequents = list(consequents)[0]
         G.add_node(label_antecendents)
         G.add_node(label_consequents)
-        G.add_edge(label_antecendents, label_consequents)
+        G.add_edge(label_consequents, label_antecendents)
         # Create Data Objects with entity names
         data_object = {
             'antecedents': label_antecendents,

@@ -26,8 +26,9 @@ if __name__ == '__main__':
 
     # graph = sap_graph.create_graph(sap_graph.relationship_with_entity, html_file)
     # dm.apply_gspan(graph)
-    dm.apply_association_rule_mining(sap_graph.relationship_with_entity)
-    
+    (network, data) = dm.apply_association_rule_mining(sap_graph.relationship_with_entity)
+    doObj = essential_api.DataObjectAndAttributes(network, sap_graph.relationship_with_entity)
+    doObj.process()
     # connect_neo4j.create_data(graph)
     
     # login = essential_api.LoginApi()
