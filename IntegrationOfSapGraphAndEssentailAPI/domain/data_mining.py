@@ -24,8 +24,8 @@ def apply_gspan(G: Network):
 
 
 def apply_association_rule_mining(entities_relationsips: dict,
-                                  min_support = 0.0009,
-                                  min_confidence = 0.2,
+                                  min_support = 0.0006,
+                                  min_confidence = 0.1,
                                   min_lift = 3,
                                   min_length = 2,
                                   cli = True):

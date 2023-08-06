@@ -21,6 +21,8 @@ REPO_ID = os.getenv('REPOSITORY_ID')
 SINGLE_INSTANCE_URL = EA_BASE_URL + 'api/essential-utility/v3/repositories/{0}/instances'.format(REPO_ID)
 BATCH_INSTANCE_URL = EA_BASE_URL + 'api/essential-utility/v3/repositories/{0}/instances/batch'.format(REPO_ID)
 DO_CLASSES_INSTANCES_URL = EA_BASE_URL + '/api/essential-utility/v3/repositories/{0}/classes/Data_Object/instances'.format(REPO_ID)
+DS_CLASSES_INSTANCES_URL = EA_BASE_URL + '/api/essential-utility/v3/repositories/{0}/classes/Data_Subject/instances'.format(REPO_ID)
+IC_CLASSES_INSTANCES_URL = EA_BASE_URL + '/api/essential-utility/v3/repositories/{0}/classes/Information_Concept/instances'.format(REPO_ID)
 CLEAR_URL = EA_BASE_URL + '/api/essential-utility/v2/repositories/{0}/instances/'.format(REPO_ID)
 
 class LoginApi:
@@ -254,6 +256,7 @@ class DataObjectAndAttributes:
 
     def process(self):
         self._clear_all_data_object()
+        self._clear_all_data_subject()
         payload = {
             'className': 'Data_Object',
         }
@@ -261,11 +264,11 @@ class DataObjectAndAttributes:
         generalisation_data_object = dict()
         specialisation_data_object = dict()
         status_history = []
+        ds_data = []
         for node in self.nodes.nodes:
             node_id = node['id']
             neigbhours = self.nodes.neighbors(node_id)
             g_payloads = []
-
             got_node = self._get_instance(node_id)
             if got_node != None:
                 continue
@@ -289,14 +292,21 @@ class DataObjectAndAttributes:
                     g_payloads.append(g_payload)
 
                 payload['name'] = node_id
+                payload['className'] = 'Data_Object'
                 payload['data_object_generalisations'] = g_payloads
-            # else:
-            #     print('Spealization')
-            # print(node_id + ' => ' + str(neigbhours))
+                
             parent_data_object_response = self._add_data_object(payload)
+            
+            if parent_data_object_response.status_code == 200:
+                ds = self._add_data_subject(parent_data_object_response.json(), g_payloads)
+                ds_data.append(ds)
+            else:
+                print('Failing entity ', payload)
             status_history.append(parent_data_object_response.status_code)
-
+        self._add_information_concept(ds_data)
+        print('Finishing automation process')
         return status_history
+    
     def _add_data_object(self, data):
         payload = json.dumps(data)
         response = requests.request('POST', self.url, headers=self.headers, data=payload)
@@ -304,6 +314,50 @@ class DataObjectAndAttributes:
         if response.status_code != 200:
             print('Error - ' + str(response))
         return response
+    
+    def _add_data_subject(self, data: dict, kids: list):
+        if len(kids) == 0:
+            return
+        
+        # kids.append(data)
+        payload = {
+            "className": "Data_Subject",
+            "name": data['name'] + ' - Subject',
+            "realised_by_data_objects": [
+                { 'name': entity['name'], 'className': 'Data_Object' } 
+                for entity in kids
+            ]
+        }
+        payload = json.dumps(payload)
+        response = requests.request('POST', self.url, headers=self.headers, data=payload)
+
+        if response.status_code != 200:
+            print('Error - ' + str(response.json()))
+    
+        return response.json()
+    
+   
+    def _add_information_concept(self, data: list, name = 'SAP Graph Information Concept'):
+        response = requests.request('GET', IC_CLASSES_INSTANCES_URL, headers=self.headers)
+        if response.status_code == 200:
+            result = response.json()['instances']
+            grab_result = {}
+            for r in result:
+                if r['name'] == name and r.get('info_concept_info_domain') != None:
+                    grab_result = r
+
+            grab_result['supporting_data_subjects'] = [
+                { "id": d['id'], "className": d['className'], 'name': d['name'] } 
+                for d in data if d is not None
+            ]
+            
+            payload = json.dumps(result)
+            response = requests.request('POST', self.url, headers=self.headers, data=payload)
+
+            if response.status_code != 200:
+                print('Error - ' + str(response.json()))
+        
+            return response.json()
     
     def _get_instance(self, node_id):
         response = requests.request('GET', DO_CLASSES_INSTANCES_URL, headers=self.headers)
@@ -326,3 +380,20 @@ class DataObjectAndAttributes:
                 print('Deleted instance Id => ' + d['id'])
             else:
                 print('ERROR Deleting ' + str(response.json()))
+
+
+    def _clear_all_data_subject(self):
+        response = requests.request('GET', DS_CLASSES_INSTANCES_URL, headers=self.headers)
+        data = response.json()['instances']
+        # DELETE IT
+        for d in data:
+            url = CLEAR_URL + d['id']
+            response = requests.request('DELETE', url, headers=self.headers)
+            if response.status_code == 200:
+                print('Deleted instance Id => ' + d['id'])
+            else:
+                print('ERROR Deleting ' + str(response.json()))
+
+
+    def _add_data_attributes(self):
+        self.sap_graph
