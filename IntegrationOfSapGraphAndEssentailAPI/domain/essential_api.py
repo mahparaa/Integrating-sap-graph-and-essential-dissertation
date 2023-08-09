@@ -345,15 +345,17 @@ class DataObjectAndAttributes:
             for r in result:
                 if r['name'] == name and r.get('info_concept_info_domain') != None:
                     grab_result = r
+                    break
 
             grab_result['supporting_data_subjects'] = [
                 { "id": d['id'], "className": d['className'], 'name': d['name'] } 
                 for d in data if d is not None
             ]
             
-            payload = json.dumps(result)
+            payload = json.dumps(grab_result)
             response = requests.request('POST', self.url, headers=self.headers, data=payload)
 
+            print(curlify.to_curl(response.request))
             if response.status_code != 200:
                 print('Error - ' + str(response.json()))
         
