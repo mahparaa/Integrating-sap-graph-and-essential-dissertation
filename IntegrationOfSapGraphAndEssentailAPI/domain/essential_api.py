@@ -23,6 +23,7 @@ BATCH_INSTANCE_URL = EA_BASE_URL + 'api/essential-utility/v3/repositories/{0}/in
 DO_CLASSES_INSTANCES_URL = EA_BASE_URL + '/api/essential-utility/v3/repositories/{0}/classes/Data_Object/instances'.format(REPO_ID)
 DS_CLASSES_INSTANCES_URL = EA_BASE_URL + '/api/essential-utility/v3/repositories/{0}/classes/Data_Subject/instances'.format(REPO_ID)
 IC_CLASSES_INSTANCES_URL = EA_BASE_URL + '/api/essential-utility/v3/repositories/{0}/classes/Information_Concept/instances'.format(REPO_ID)
+ID_CLASSES_INSTANCES_URL = EA_BASE_URL + '/api/essential-utility/v3/repositories/{0}/classes/Information_Domain/instances'.format(REPO_ID)
 CLEAR_URL = EA_BASE_URL + '/api/essential-utility/v2/repositories/{0}/instances/'.format(REPO_ID)
 
 class LoginApi:
@@ -154,10 +155,10 @@ class InformationConcept:
             'Content-Type': 'application/json'
             }
 
-    def upload_data(self, data: dict):
-        return self._create_concept(data)
+    def upload_data(self, data: dict, supporting_ds = []):
+        return self._create_concept(data, supporting_ds)
 
-    def _create_concept(self, data):
+    def _create_concept(self, data, supporting_ds):
         business_domain_name = "SAP Graph Business Domain"
         business_domain_class = "Business_Domain"
 
@@ -206,6 +207,10 @@ class InformationConcept:
                 "className": info_objective_class,
                 "id": cio_response.json()['id'],
             }],
+            "supporting_data_subjects": [
+                { "id": d['id'], "className": d['className'], 'name': d['name'] } 
+                for d in supporting_ds if d is not None
+            ],
             "externalIds": self.external_ids,
         }
         
@@ -230,7 +235,6 @@ class InformationConcept:
     def _send_post_request(self, data):
         payload = json.dumps(data)
         response = requests.request('POST', self.url, headers=self.headers, data=payload)
-        print(curlify.to_curl(response.request))
         if response.status_code != 200:
             print('Response has an error ' + str(response))
 
@@ -247,6 +251,7 @@ class DataObjectAndAttributes:
         self.sap_graph = sap_graph_with_attributes
         self.cli = cli
         self.url = SINGLE_INSTANCE_URL
+        self.token = token
         self.headers = { 
             'Authorization': 'Bearer {0}'.format(token),
             'x-api-key': EA_API_KEY,
@@ -303,7 +308,7 @@ class DataObjectAndAttributes:
             else:
                 print('Failing entity ', payload)
             status_history.append(parent_data_object_response.status_code)
-        self._add_information_concept(ds_data)
+        self._add_information_logical(ds_data)
         print('Finishing automation process')
         return status_history
     
@@ -336,31 +341,6 @@ class DataObjectAndAttributes:
     
         return response.json()
     
-   
-    def _add_information_concept(self, data: list, name = 'SAP Graph Information Concept'):
-        response = requests.request('GET', IC_CLASSES_INSTANCES_URL, headers=self.headers)
-        if response.status_code == 200:
-            result = response.json()['instances']
-            grab_result = {}
-            for r in result:
-                if r['name'] == name and r.get('info_concept_info_domain') != None:
-                    grab_result = r
-                    break
-
-            grab_result['supporting_data_subjects'] = [
-                { "id": d['id'], "className": d['className'], 'name': d['name'] } 
-                for d in data if d is not None
-            ]
-            
-            payload = json.dumps(grab_result)
-            response = requests.request('POST', self.url, headers=self.headers, data=payload)
-
-            print(curlify.to_curl(response.request))
-            if response.status_code != 200:
-                print('Error - ' + str(response.json()))
-        
-            return response.json()
-    
     def _get_instance(self, node_id):
         response = requests.request('GET', DO_CLASSES_INSTANCES_URL, headers=self.headers)
         data = response.json()['instances']
@@ -371,8 +351,41 @@ class DataObjectAndAttributes:
 
         return None
     
+    def _add_information_logical(self, supporting_subject: list):
+        info = InformationConcept(self.token)
+        request_data = { 
+            "name": "SAP Graph Information Concept",
+            "className": "Information_Concept"
+        }
+
+        info.upload_data(request_data, supporting_subject)
+    
     def _clear_all_data_object(self):
         response = requests.request('GET', DO_CLASSES_INSTANCES_URL, headers=self.headers)
+        data = response.json()['instances']
+        # DELETE IT
+        for d in data:
+            url = CLEAR_URL + d['id']
+            response = requests.request('DELETE', url, headers=self.headers)
+            if response.status_code == 200:
+                print('Deleted instance Id => ' + d['id'])
+            else:
+                print('ERROR Deleting ' + str(response.json()))
+
+    def _clear_all_information_domain(self):
+        response = requests.request('GET', IC_CLASSES_INSTANCES_URL, headers=self.headers)
+        data = response.json()['instances']
+        # DELETE IT
+        for d in data:
+            url = CLEAR_URL + d['id']
+            response = requests.request('DELETE', url, headers=self.headers)
+            if response.status_code == 200:
+                print('Deleted instance Id => ' + d['id'])
+            else:
+                print('ERROR Deleting ' + str(response.json()))
+
+    def _clear_all_information_concept(self):
+        response = requests.request('GET', ID_CLASSES_INSTANCES_URL, headers=self.headers)
         data = response.json()['instances']
         # DELETE IT
         for d in data:
