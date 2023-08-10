@@ -262,6 +262,9 @@ class DataObjectAndAttributes:
     def process(self):
         self._clear_all_data_object()
         self._clear_all_data_subject()
+        self._clear_all_information_concept()
+        self._clear_all_information_domain()
+        
         payload = {
             'className': 'Data_Object',
         }
