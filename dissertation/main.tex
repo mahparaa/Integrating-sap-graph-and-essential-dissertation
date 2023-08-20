@@ -34,9 +34,7 @@ I extend my heartfelt appreciation to Dr. Simon for his mentorship, support, and
 \section*{Abstract}
 The SAP Business Technology Platform serves as a robust foundation for businesses, offering the necessary tools to build, integrate, extend, and operate applications and services seamlessly. Complementing this, Essential Architecture equips enterprises with powerful tools for designing, structuring, organizing, and managing intricate enterprise architectures, encompassing technology, processes, data, and personnel.
 
-This dissertation explores the feasibility and advantages of automating Essential Architecture (EA) by harnessing the capabilities of SAP Graph Metadata entities and leveraging the SAP Graph and Essential Architecture APIs. The primary challenge in integrating SAP Graph with Essential Architecture stems from managing a substantial number of entities, reaching approximately 2000, including custom entities. Manual handling of this vast amount of data can result in errors and duplicate entries. Nevertheless, this challenge is effectively addressed by harnessing the APIs provided by both platforms, unlocking the potential for automating the entire process. Automating Essential Architecture through integrating SAP Graph metadata with the essential architecture presents its share of challenges, notably due to the sheer size of the SAP Graph metadata. To overcome this obstacle and ensure data accuracy, data mining algorithms prove indispensable. Utilizing association mining rules facilitates the extraction of pertinent information from the extensive SAP Graph metadata before merging it with the Essential Architecture, ensuring a streamlined and error-free integration. Crucially, the SAP Graph API furnishes metadata that details the relationships among entities. Additionally, the utilization of Linked Enterprise Data proves instrumental in organizing and connecting data seamlessly, offering efficient queries to access and retrieve linked information.
-
-The core focus of this dissertation centers on the realization of automating essential architecture (EA) by integrating SAP Graph Metadata. The research delves into the intricacies and potentials of this integration approach, shedding light on its transformative impact in streamlining and optimizing essential project processes. The outcomes and insights drawn from this study contribute significantly to the field of enterprise architecture. The findings serve as a stepping stone for further research and real-world implementation, promising innovative and efficient solutions to tackle complex enterprise architecture challenges. As organizations continue to seek ways to enhance their operations and drive innovation, the exploration of automated Essential Architecture becomes increasingly relevant and effective.
+This dissertation explores the feasibility and advantages of automating Essential Architecture (EA) by harnessing the capabilities of SAP Graph Metadata entities and leveraging the SAP Graph and Essential Architecture APIs. The primary challenge in integrating SAP Graph with Essential Architecture stems from managing a substantial number of entities, reaching approximately 2000, including custom entities. Manual handling of this vast amount of data can result in errors and duplicate entries. Nevertheless, this challenge is effectively addressed by harnessing the APIs provided by both platforms, unlocking the potential for automating the entire process. Automating Essential Architecture through integrating SAP Graph metadata with the essential architecture presents its share of challenges, notably due to the sheer size of the SAP Graph metadata. To overcome this obstacle and ensure data accuracy, data mining algorithms prove indispensable. Utilizing association mining rules facilitates the extraction of pertinent information from the extensive SAP Graph metadata before merging it with the Essential Architecture, ensuring a streamlined and error-free integration. Crucially, the SAP Graph API furnishes metadata that details the relationships among entities. Additionally, the utilization of Linked Enterprise Data proves instrumental in organizing and connecting data seamlessly, offering efficient queries to access and retrieve linked information. The findings serve as a stepping stone for further research and real-world implementation, promising innovative and efficient solutions to tackle complex enterprise architecture challenges. As organizations continue to seek ways to enhance their operations and drive innovation, the exploration of automated Essential Architecture becomes increasingly relevant and effective.
 
 \newpage
 \tableofcontents
@@ -565,8 +563,8 @@ After analyzing the result, the dissertation can be able to group these entities
 Table 1 shows the outcome of the data subject, which is analyzed by the organization. This gives the organization the basic structure and a clearer view of the information system. Using automation the information produced is more accurate and no redundancy is found. The mentioned entities above are 74 in the data object, inside the data subject number of the data objects is also 74. 
 
 \maketitle
-\section{User Evaluation}
-
+\subsection{User Evaluation}
+User Evaluation discussion here (TODO)
 
 \maketitle
 \subsection{Benefit of Automation and Integration}
@@ -918,7 +916,7 @@ www.shu.ac.uk/research/excellence/ethics-and-integrity
 
 \textbf{7.	Where will this take place?} Online
 
-\textbf{8.	How often will I have to take part, and for how long?} Interview and demonstration, about 1 hours
+\textbf{8.	How often will I have to take part, and for how long?} Interview and demonstration, about 1 hour
 
 \textbf{9. if deception is involved in the study} in the event that deception is incorporated into the study, we are committed to upholding a principled approach that prioritizes transparency and ethical considerations. If any form of withholding information or providing partial misinformation is deemed necessary, participants will be promptly alerted to this fact. It is important to note that any such instances of deception will be minimized to the extent feasible. We recognize the significance of informed participation, and if deception is employed, participants will receive a comprehensive debriefing at an appropriate juncture. This debriefing will ensure that participants are fully informed about any withheld information or misinformation and will provide them with a complete understanding of the study's objectives, procedures, and outcomes.
 
@@ -984,24 +982,35 @@ An onion research methodology consent }
 
 \newpage
 
-\section{Appendix E: SAP Graph Data Gathering}
+\section{Appendix E: Publication Form}
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[scale=0.8]{publication-form-signed}
+    \caption{Publication Form Signed }
+    \label{fig:publication-form-signed}
+\end{figure}
+
+\newpage
+
+\section{Appendix F: SAP Graph Data Gathering}
 The SAP Graph API provides two APIs one for logging in API. This process is called OAuth 2.0. The API depends on the client id, client secrets, and redirect URI. This redirect URI is the client's application. Once the client id and client secrets are verified, the client is provided with a one-time code, which is passed to the SAP, SAP after authenticating the provided code, opens its webpage for the user to enter the username and password, once the user enters the validate credentials user is returned with an access token for accessing the resources in the SAP. The access token is JWT based and it contains the information about the authority of resources to access by users. 
 
 To access the resource (SAP Graph) entities data, There are two APIs consumed. The first API call retrieves catalog data for the entities, this API does not contain entity data but URL path information about the retrieval of the entities' data. Using the for loop on the API, the request is made to the path provided by the SAP API to fetch all the entity's metadata. Inside the metadata, the \$ref property contains the entity name to which it is connected. 
 
 \section{Appendix F: Essential Architecture APIs}
-For integrating with the essential architecture for the dissertation the CRUD operation API was provided by the essential architecture. First using the login API to get the bearer token. The API depends on API Key which can be retrieved from the user profile under the essential architecture web application. Using the /instances POST requests to create the entities, the /instances POST request requires the class name, name to create a basic instance for the concrete class. The dissertation also deletes the existing instances to sync with the most updated data, therefore using /classes/<classname>/instances DELETE requests to delete the existing entities.
+For integrating with the Essential Architecture for the dissertation the CRUD operation API was provided by the Essential Architecture. First using the login API to get the bearer token. The API depends on API Key which can be retrieved from the user profile under the essential architecture web application. Using the /instances POST requests to create the entities, the /instances POST request requires the class name, name to create a primary instance for the concrete class. The dissertation also deletes the existing instances to sync with the most updated data, therefore using /classes/<classname>/instances DELETE requests to delete the existing entities.
 
-\section{Appendix G: Web application Libraries Dependencies}
+\section{Appendix H: Web application Libraries Dependencies}
 
-The following are the list of libraries used to develop the complete application
+The following is the list of libraries used to develop the complete application
 
 \begin{enumerate}
-    \item Django - A Python web framework to develop a web application, the Django provide out of box functionality to render HTML pages and server side processings.
-    \item PyVis - A Python library used to create a network graph. The nodes are represented as a entities and edges represent the connection between the entities
+    \item Django - A Python web framework to develop a web application, Django provides functionality to render HTML pages and server-side processing.
+    \item PyVis - A Python library used to create a network graph. The nodes are represented as entities and edges represent the connection between the entities
     \item Apyori - A Python library used for association rule mining algorithm
     \item Neo4j - A Python library provided by Neo4j database to connect with Neo4j. This library is used to interact with the Neo4j database
-    \item Bootstrap 5 - The JavaScript library for presentation layer in the web application. The library provides out of box features for better user interface development
+    \item Bootstrap 5 - The JavaScript library for the presentation layer in the web application. The library provides box features for better user interface development
     \item JQuery - The JavaScript library to interact with HTML DOM effectively
     \item VIS Network - The JavaScript library to display graph/network data. The library is similar to the PyVis but written in JavaScript
 \end{enumerate}
