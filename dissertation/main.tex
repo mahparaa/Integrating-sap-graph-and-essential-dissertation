@@ -65,8 +65,10 @@ In addition to graph implementation, Database Reverse Engineering based on Assoc
 These research findings shed light on the potential of integrating SAP Graph Metadata and Essential Architecture through APIs. By building upon existing approaches, such integration promises streamlined data management, improved performance, and enhanced insights for enterprises. However, while the groundwork has been laid, further exploration and validation in real-world scenarios are crucial to fully realize the benefits of this integration for complex enterprise architecture management.
 
 \maketitle
-\subsection{The Motivation}
+\subsection{Background and Motivation}
 In today's digital era, businesses operate in a highly interconnected and data-driven environment, where the effective management and utilization of technology play a pivotal role in achieving success and competitive advantage. Among the array of technology solutions available, the SAP Business Technology Platform stands as a powerful enabler, offering a comprehensive suite of tools to build, integrate, extend, and operate applications and services. Alongside this, other cloud platforms, such as Essential Architecture and various industry-specific solutions, present valuable opportunities to enhance operational efficiency, optimize data management, and drive innovation.
+
+Enterprise Architecture (EA) principally relies on our human cognition of an organisation. Data, however, reflects the actuality of the organisation’s performance, and metadata adds meaning by contextualising it as data about the data. Metadata, articulated through an Enterprise Data Graph (EDG), becomes a natural input into EA tools, augmenting and validating the human perception of the enterprise. SAP Graph characterises the EDG recently released into general availability from the market-leading enterprise systems vendor SAP. An attractive feature of SAP Graph is that it can automatically capture an organisation’s metadata across its SAP and non-SAP systems, thus informing the organisation’s EA unconstrained by the applications or systems it runs to give a holistic picture of its EA. Essential Project (EP) is the only EA tool rated Visionary on the highly respected Gartner Magic Quadrant. A characteristic of EP is that it automatically draws visualisations (or views) from the metamodel of the enterprise. The research aims to integrate SAP Graph with EP to bring both forms of automation together, leveraging each other and potentially resulting in hyper-automation. One evident application of the success of this hyper-automation is Application Rationalisation (AR), where the metadata can be visualised across all the existing applications and systems, identifying redundancies and technical debt whereby metadata can be refactored according to best practices, clean core solutions, or minimal customisations where the metadata is unique to that already known. EP’s views would retain the human readability of the visualisations, thereby aligning the computer-driven hyper-automation with the human perception of the enterprise for effective decision-making in addressing AR or other challenges that EA can support.
 
 The motivation behind this research dissertation lies in recognizing the ever-increasing need for seamless automation and integration of SAP with other useful cloud platforms, particularly Essential Architecture. While the SAP Business Technology Platform serves as a robust foundation for businesses, providing extensive capabilities to support their operations, it is often imperative for enterprises to leverage additional cloud platforms to cater to their specific needs and industry requirements.
 
@@ -77,6 +79,18 @@ The motivation behind this research dissertation lies in recognizing the ever-in
 \textbf{Enhanced Data Analysis and Insights –} The combination of SAP, Essential Architecture, and Linked Data Enterprise enriches data analytics capabilities, enabling enterprises to derive deeper insights and identify trends that drive business growth and operational efficiency.
 
 \textbf{Research Gap –} As mentioned in previous work, the SAP Graph was used to create scalable and improved querying by creating an abstract layer. However, what remains unexplored is the automation and integration of SAP Graph to extract useful information for optimizing business processes. The existing literature lacks a comprehensive investigation into harnessing the full potential of SAP Graph by seamlessly integrating it with other platforms to derive valuable insights and support data-driven decision-making.
+
+\maketitle
+\subsection{Aim and Reserach Question(s)}
+The research aims to explore the potential for hyper-automation in Enterprise Architecture (EA) by integrating
+
+\begin{enumerate}
+    \item SAP Graph as an Enterprise Data Graph (EDG)
+    \item Essential Project (EP) using the SAP Graph and EP APIs and bringing the two forms of automation together in EP's views, supported by data mining algorithms for metadata that retain human readability.
+\end{enumerate}
+
+The research question is, “How can integrating SAP Graph Metadata and the Essential Project software bring hyper-automation to Enterprise Architecture?”
+
 
 \maketitle
 \subsection{Objective and Scope}
@@ -551,6 +565,10 @@ After analyzing the result, the dissertation can be able to group these entities
 Table 1 shows the outcome of the data subject, which is analyzed by the organization. This gives the organization the basic structure and a clearer view of the information system. Using automation the information produced is more accurate and no redundancy is found. The mentioned entities above are 74 in the data object, inside the data subject number of the data objects is also 74. 
 
 \maketitle
+\section{User Evaluation}
+
+
+\maketitle
 \subsection{Benefit of Automation and Integration}
 
 In the realm of computer science, the demand for automation has experienced swift and significant growth. This surge is primarily attributed to the concept of continuous integration and delivery, wherein systems operate programmatically to minimize or eradicate manual processes. This acceleration empowers organizations to make prompt decisions and maintain up-to-date operations \parencite{wilcox2015}. 
@@ -876,13 +894,82 @@ Health and Safety Risk Assessment Form  \textbf{NA}
 
 \section{Appendix C: PARTICIPANT INFORMATION SHEET}
 
-\begin{figure}[ht!]
-    \centering
-    \includegraphics[scale=0.35]{participant-consent-form}
-    \caption{Participant Consent Form Signed}
-    \label{fig:participant-consent}
-\end{figure}
+\textbf{GUIDANCE ON PREPARING A PARTICIPANT INFORMATION SHEET}
 
+The following issues should be addressed where relevant. This could be, but does not have to be, in a question-answer format. Use a format that best meets the needs of your research participants, but the list below summarises the areas that need to be addressed to ensure participants are appropriately informed. Plain easily-understood language should be used with a minimum of technical or academic terms or jargon. Pay special attention to preparing material for children or adults with limited cognitive capacity - further information on this can be obtained from www.hra-decisiontools.org.uk/consent/
+
+\textbf{List of Contents Required:} They do not have to be presented in this order as numbered questions; rather this list provides a checklist of the material that is now required to be in a Participant Information Sheet or equivalent briefing under GDPR. 
+
+\textbf{1.	Title of Project} Hyper-automating Enterprise Architecture (EA) by Integrating SAP Graph Metadata and Essential Project
+
+\textbf{2.	Legal basis for research for studies.}
+The University undertakes research as part of its function for the community under its legal status. Data protection allows us to use personal data for research with appropriate safeguards in place under the legal basis of public tasks that are in the public interest.  A full statement of your rights can be found at: www.shu.ac.uk/about-this-website/privacy-policy/privacy-notices/privacy-notice-for-research. However, all University research is reviewed to ensure that participants are treated appropriately, and their rights respected. This study was approved by UREC with Converis number ERxxxxxxx. Further information at: 
+
+www.shu.ac.uk/research/excellence/ethics-and-integrity 
+
+
+\textbf{3.	Opening statement:} Invitation and purpose of research to hyper-automating enterprise architecture by integrating SAP Graph metadata and essential project. The automation and integration will help organization to extract useful information for their information systems.
+
+\textbf{4.	Why have you asked me to take part?} Participants will gain valuable insights into the benefits of automation through the integration of SAP Graph with essential architecture. This research endeavor serves to enhance organizational comprehension of diverse avenues for automation leveraging SAP Graph and essential architecture, thereby elucidating strategies to harness these advantages effectively. The study also delves into uncharted domains of analytics and information generation, expanding the horizons of knowledge in these critical areas.
+
+\textbf{5.	Do I have to take part?} Your participation in this study is entirely voluntary. The decision to take part is entirely up to you, and there is no obligation whatsoever. We respect your autonomy and understand that your participation is a personal choice. If you do decide to participate, we will provide you with a copy of all the information shared here, including the consent form. This ensures that you have a clear understanding of the study's purpose, procedures, and your rights as a participant.
+
+\textbf{6.	What will I be required to do?} Ask questions and talk about experiences if any
+
+\textbf{7.	Where will this take place?} Online
+
+\textbf{8.	How often will I have to take part, and for how long?} Interview and demonstration, about 1 hours
+
+\textbf{9. if deception is involved in the study} in the event that deception is incorporated into the study, we are committed to upholding a principled approach that prioritizes transparency and ethical considerations. If any form of withholding information or providing partial misinformation is deemed necessary, participants will be promptly alerted to this fact. It is important to note that any such instances of deception will be minimized to the extent feasible. We recognize the significance of informed participation, and if deception is employed, participants will receive a comprehensive debriefing at an appropriate juncture. This debriefing will ensure that participants are fully informed about any withheld information or misinformation and will provide them with a complete understanding of the study's objectives, procedures, and outcomes.
+
+\textbf{10.	Are there any possible risks or disadvantaged in taking part.} There will be no possible risks or disadvantages in taking part.
+
+\textbf{11.	What are the possible benefits of taking part?} Expanding the horizons of future inquiry, this research not only facilitates exploration into new realms of study but also extends substantial benefits by enabling the adoption and adept utilization of automation and integration processes. The study's outcomes promise to optimize a diverse array of domain-specific processes, thereby contributing to enhanced operational efficiency and effectiveness.
+
+\textbf{12.	When will I have the opportunity to discuss my participation?} "We highly value your participation in this research study, and your understanding of the process is of paramount importance. Following your involvement in the study, a designated debriefing session will be arranged to provide you with the opportunity to discuss your participation comprehensively. In cases where deception has been a part of the study, the debriefing will include a detailed explanation of any withheld information or potential misinformation that might have been encountered during the research. This debriefing session aims to ensure that you are fully informed about the study's nature, objectives, and procedures, thereby enhancing your understanding of your role and the study's outcomes.
+
+\textbf{13.	Will anyone be able to connect me with what is recorded and reported?} Maintaining the confidentiality and privacy of your participation is of utmost importance to us. Rest assured that stringent measures are in place to safeguard the information recorded and reported during this study. Access to the recorded data and reports will be strictly limited to authorized individuals directly involved in the research process. These individuals are bound by strict confidentiality agreements and ethical guidelines, ensuring that your information remains secure and protected.
+
+\textbf{14.	Who will be responsible for all of the information when this study is over?} The responsibility for safeguarding and managing all information gathered during this study rests with the principal investigator and the research team. Once the study concludes, the collected data will be securely stored and managed in accordance with established data retention and protection protocols. Rest assured that your information will be handled with the utmost care and professionalism, and all efforts will be made to maintain the security and integrity of the data in compliance with ethical and legal standards. If you have any specific concerns or inquiries about the handling of information after the study concludes, please feel free to address them during the debriefing session or at any point during the research process. Your peace of mind and trust in our research procedures are highly valued.
+
+\textbf{15.	Who will have access to it?} Authorized members of the research team will oversee the storage, analysis, and eventual disposal of the data, ensuring that confidentiality and privacy are upheld.
+
+\textbf{16.	What will happen to the information when this study is over?} Once the designated retention period expires, physical copies of data (if applicable) will be securely destroyed, and electronic data will be permanently deleted from all systems.
+
+\textbf{17.	How will you use what you find out?} We will use it for demonstration purposes and for proof of concepts only.
+
+\textbf{18.	How long is the whole study likely to last?} 3 months
+
+\textbf{19.	How can I find out about the results of the study?} Through the Sheffield Hallam University dissertation archives.
+
+Participants need to be given the opportunity to ask any further questions or seek clarification. 
+This information needs to be provided at the end.
+
+Details of who to contact if you have any concerns or if adverse effects occur after the study are given below.
+
+\textbf{Researcher/ Research Team Details:}
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{|p{0.4\linewidth}|p{0.4\linewidth}|}
+\hline
+\textbf{You should contact the Data Protection Officer if:} & \textbf{You should contact the Head of Research Ethics (Dr Mayur Ranchordas) if:} \\
+\hline
+You have a query about how your data is used by the University & You have concerns with how the research was undertaken or how you were treated \\
+\hline
+You would like to report a data security breach (e.g. if you think your personal data has been lost or disclosed inappropriately) &  \\
+\hline
+You would like to complain about how the University has used your personal data & \\
+\hline
+\multicolumn{2}{|l|}{Postal address: Sheffield Hallam University, Howard Street, Sheffield S1 1WBT} \\
+\multicolumn{2}{|l|}{Telephone: 0114 225 5555} \\
+\hline
+\end{tabular}
+\caption{Researcher/Research Team Details}
+\end{table}
+
+
+\newpage
 
 \section{Appendix D: Saunders Research Onion}
 Figure 1, the consent to use the Saunders' research onion figure has been taken from the grad coach. The below figure is the screenshot of the consent.
@@ -894,6 +981,8 @@ Figure 1, the consent to use the Saunders' research onion figure has been taken 
 An onion research methodology consent }
     \label{fig:onion-research-consent}
 \end{figure}
+
+\newpage
 
 \section{Appendix E: SAP Graph Data Gathering}
 The SAP Graph API provides two APIs one for logging in API. This process is called OAuth 2.0. The API depends on the client id, client secrets, and redirect URI. This redirect URI is the client's application. Once the client id and client secrets are verified, the client is provided with a one-time code, which is passed to the SAP, SAP after authenticating the provided code, opens its webpage for the user to enter the username and password, once the user enters the validate credentials user is returned with an access token for accessing the resources in the SAP. The access token is JWT based and it contains the information about the authority of resources to access by users. 
