@@ -992,4 +992,18 @@ To access the resource (SAP Graph) entities data, There are two APIs consumed. T
 \section{Appendix F: Essential Architecture APIs}
 For integrating with the essential architecture for the dissertation the CRUD operation API was provided by the essential architecture. First using the login API to get the bearer token. The API depends on API Key which can be retrieved from the user profile under the essential architecture web application. Using the /instances POST requests to create the entities, the /instances POST request requires the class name, name to create a basic instance for the concrete class. The dissertation also deletes the existing instances to sync with the most updated data, therefore using /classes/<classname>/instances DELETE requests to delete the existing entities.
 
+\section{Appendix G: Web application Libraries Dependencies}
+
+The following are the list of libraries used to develop the complete application
+
+\begin{enumerate}
+    \item Django - A Python web framework to develop a web application, the Django provide out of box functionality to render HTML pages and server side processings.
+    \item PyVis - A Python library used to create a network graph. The nodes are represented as a entities and edges represent the connection between the entities
+    \item Apyori - A Python library used for association rule mining algorithm
+    \item Neo4j - A Python library provided by Neo4j database to connect with Neo4j. This library is used to interact with the Neo4j database
+    \item Bootstrap 5 - The JavaScript library for presentation layer in the web application. The library provides out of box features for better user interface development
+    \item JQuery - The JavaScript library to interact with HTML DOM effectively
+    \item VIS Network - The JavaScript library to display graph/network data. The library is similar to the PyVis but written in JavaScript
+\end{enumerate}
+
 \end{document}
