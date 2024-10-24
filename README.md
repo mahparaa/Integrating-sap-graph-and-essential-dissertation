@@ -1,4 +1,4 @@
-# integrating-sap-graph-and-essential-dissertation
+# integrating-sap-graph-and-essential-project-dissertation
 
 The project is to connect with SAP Graph and using the returned metadata to capture data and visualize in Essential Architecture. 
 
